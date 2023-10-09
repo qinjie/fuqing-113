@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fuqing Association 113</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <h1>福清会馆113周年庆</h1>
+    <br />
+    <form
+      class="search-form"
+      method="POST"
+      action="{{ url_for('index_guest') }}"
+    >
+      <label for="search_pattern">Enter Guest:</label>
+      <input type="text" name="search_pattern" required />
+      <input type="submit" value="Search" class="search-button" />
+      <!-- Create Guest Button -->
+      <a href="{{ url_for('create_guest') }}" class="create-button"
+        >Create Guest</a
+      >
+    </form>
+
+    {% if guests %}
+    <h2>Search Results for "{{ pattern }}"</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Organization</th>
+          <th>Title</th>
+          <th>Country</th>
+          <th>Hash</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for guest in guests %}
+        <tr>
+          <td>{{ guest.full_name }}</td>
+          <td>{{ guest.organization }}</td>
+          <td>{{ guest.title }}</td>
+          <td>{{ guest.country }}</td>
+          <td>{{ guest.hash }}</td>
+          <td>
+            <a href="{{ url_for('view_guest_by_hash', hash=guest.hash) }}"
+              >View</a
+            >
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </body>
+</html>

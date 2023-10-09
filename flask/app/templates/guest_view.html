@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Guest Details</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <script>
+      // Function to convert UTC datetime to local timezone with optional time omission
+      function convertToLocalTime(utcTime, omitTimeIfMidnight) {
+        const date = new Date(utcTime);
+        if (
+          omitTimeIfMidnight &&
+          date.getHours() === 0 &&
+          date.getMinutes() === 0
+        ) {
+          return date.toLocaleDateString(); // Display only the date
+        }
+        return date.toLocaleString(); // Display date and time
+      }
+
+      // Function to update datetime values in the table
+      function updateDatetimeValues() {
+        const datetimeCells = document.querySelectorAll(".datetime-cell");
+        datetimeCells.forEach((cell) => {
+          const utcTime = cell.textContent;
+          const localTime = convertToLocalTime(utcTime, true); // Omit time if midnight
+          cell.textContent = localTime;
+        });
+      }
+
+      // Call the updateDatetimeValues function when the page loads
+      window.addEventListener("load", updateDatetimeValues);
+    </script>
+  </head>
+  <body>
+    <h1>{{ guest.full_name }} {{ guest.alt_name }}</h1>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>Organization:</strong></td>
+          <td>{{ guest.organization }}</td>
+        </tr>
+        <tr>
+          <td><strong>Title:</strong></td>
+          <td>{{ guest.title }}</td>
+        </tr>
+        <tr>
+          <td><strong>Country:</strong></td>
+          <td>{{ guest.country }}</td>
+        </tr>
+        <tr>
+          <td><strong>Hash:</strong></td>
+          <td>{{ guest.hash }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    {% if guest.tasks %}
+    <h2>Notes</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Details</th>
+          <th>Date/Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in guest.tasks %}
+        <tr>
+          <td>{{ task.name }}</td>
+          <td>{{ task.details }}</td>
+          <td class="datetime-cell">{{ task.date_time }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="button-container">
+      <!-- Container for buttons -->
+      <a href="{{ url_for('index_guest') }}" class="back-button"
+        >Back to Search</a
+      >
+      <!-- Add class for styling -->
+      <a
+        href="{{ url_for('edit_guest', guest_id=guest.id) }}"
+        class="edit-button"
+        >Edit Guest</a
+      >
+      <!-- Add Edit Guest button -->
+    </div>
+    {% endif %}
+  </body>
+</html>

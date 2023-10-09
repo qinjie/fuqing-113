@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>福清会馆113周年庆节目表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Include Swiper CSS and JS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <style>
+      /* Add your mobile-friendly CSS styles here */
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+      }
+      .swiper-container {
+        width: 80%;
+        height: 100vh;
+      }
+      .swiper-slide {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid #e0e0e0; /* Add a 2px gray border around each image */
+        padding: 50px; /* Add 10px padding around each image */
+      }
+      .swiper-slide img {
+        max-width: 100%; /* Ensure images fit within their containers */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>福清会馆113周年庆节目表</h1>
+    <div class="swiper-container">
+      <div class="swiper-wrapper">
+        {% for image_name in ["day1.png", "day2.png", "day3.png"] %}
+        <div class="swiper-slide">
+          <img
+            src="{{ url_for('static', filename='images/' + image_name) }}"
+            alt="{{ image_name }}"
+          />
+        </div>
+        {% endfor %}
+      </div>
+      <!-- Add navigation buttons -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+
+    <!-- Initialize Swiper -->
+    <script>
+      var swiper = new Swiper(".swiper-container", {
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      target: flask-web
+    container_name: flask-app
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT}:5000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

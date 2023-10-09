@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create Guest</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Create Guest</h1>
+    <form
+      method="POST"
+      action="{{ url_for('create_guest') }}"
+      class="guest-form"
+    >
+      <div class="form-group">
+        <label for="full_name">Full Name:</label>
+        <input type="text" name="full_name" required />
+      </div>
+      <div class="form-group">
+        <label for="alt_name">Alternate Name:</label>
+        <input type="text" name="alt_name" />
+      </div>
+      <div class="form-group">
+        <label for="salute">Salute:</label>
+        <input type="text" name="salute" />
+      </div>
+      <div class="form-group">
+        <label for="title">Title:</label>
+        <input type="text" name="title" />
+      </div>
+      <div class="form-group">
+        <label for="organization">Organization:</label>
+        <input type="text" name="organization" />
+      </div>
+      <div class="form-group">
+        <label for="country">Country:</label>
+        <input type="text" name="country" />
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" name="email" />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone:</label>
+        <input type="text" name="phone" />
+      </div>
+      <div class="form-group">
+        <label for="details">Details:</label>
+        <textarea name="details"></textarea>
+      </div>
+      <div class="form-group">
+        <input type="submit" value="Create" class="btn-create" />
+        <a href="{{ url_for('index_guest') }}" class="btn-cancel">Cancel</a>
+      </div>
+    </form>
+  </body>
+</html>

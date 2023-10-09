@@ -1,0 +1,76 @@
+version: "3.9"
+
+networks:
+  mysql-phpmyadmin:
+    name: mysql-phpmyadmin
+    # use the bridge driver
+    driver: bridge
+
+volumes:
+  mysqldata:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "${HOME}/server/mysql/data"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    env_file: mysql.env
+    ports:
+      - "6033:3306"
+    volumes:
+      - mysqldata:/var/lib/mysql
+    networks:
+      mysql-phpmyadmin:
+        aliases:
+          - mysql
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.0
+    container_name: phpmyadmin
+    restart: always
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - 8081:80
+    networks:
+      mysql-phpmyadmin:
+        aliases:
+          - phpmyadmin
+
+  fastapi-app:
+    image: fastapi-api
+    container_name: fastapi-app
+    restart: always
+    links:
+      - mysql
+    env_file:
+      - fastapi-app.env
+    ports:
+      - 8082:80
+    networks:
+      mysql-phpmyadmin:
+        aliases:
+          - fastapi-app
+
+  flask-app:
+    image: flask-web
+    container_name: flask-app
+    restart: always
+    links:
+      - fastapi-app
+    env_file:
+      - flask-app.env
+    ports:
+      - 8085:5000
+    networks:
+      mysql-phpmyadmin:
+        aliases:
+          - flask-app

@@ -28,8 +28,9 @@ def display_pictures():
         'day3.png',
         # Add more image URLs or file paths here
     ]
-    
+
     return render_template('index.html', image_urls=image_urls)
+
 
 @app.route('/guest', methods=['GET', 'POST'])
 def index_guest():
@@ -43,6 +44,7 @@ def index_guest():
             guests = response.json()['data']
 
     return render_template('guest_index.html', guests=guests, pattern=request.form.get('search_pattern', ''))
+
 
 @app.route('/guest/create', methods=['GET', 'POST'])
 def create_guest():
@@ -68,6 +70,7 @@ def create_guest():
 
     return render_template('guest_create.html')
 
+
 @app.route('/guest/view/<int:guest_id>')
 def view_guest(guest_id):
     # Retrieve guest details from the API
@@ -80,7 +83,8 @@ def view_guest(guest_id):
 
     return render_template('guest_view.html', guest=guest)
 
-@app.route('/guest/hash/<string:hash>')
+
+@app.route('/hash/<string:hash>')
 def view_guest_by_hash(hash):
     # Retrieve guest details from the API
     response = requests.get(f"{API_BASE_URL}/guest/hash/{hash}")
@@ -117,7 +121,7 @@ def edit_guest(guest_id):
             'phone': request.form['phone'],
             'details': request.form['details']
         }
-        response = requests.put(f"{API_BASE_URL}/guest/update", json=data)
+        response = requests.put(f"{API_BASE_URL}/guest", json=data)
         app.logger.debug(response.text)
         if response.status_code == 200:
             flash('Guest updated successfully', 'success')
@@ -126,6 +130,7 @@ def edit_guest(guest_id):
             flash('Failed to update guest', 'error')
 
     return render_template('guest_edit.html', guest=guest)
+
 
 @app.route('/guest/delete/<int:guest_id>', methods=['POST'])
 def delete_guest(guest_id):

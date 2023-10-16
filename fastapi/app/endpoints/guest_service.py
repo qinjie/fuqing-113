@@ -20,12 +20,13 @@ database = Database()
 engine = database.get_db_connection()
 
 
-@router.post("/add")
+@router.post("/")
 async def add_guest(req: GuestRequest):
     new_guest = Guest(**vars(req))
     # Generate hash
     random_id = str(uuid1())
-    new_guest.hash = hashlib.sha1(random_id.encode("UTF-8")).hexdigest().upper()[:8]
+    new_guest.hash = hashlib.sha1(
+        random_id.encode("UTF-8")).hexdigest().upper()[:8]
     session = database.get_db_session(engine)
     session.add(new_guest)
     session.flush()
@@ -37,13 +38,14 @@ async def add_guest(req: GuestRequest):
     return Response(data, 200, "Guest added successfully.", False)
 
 
-@router.put("/update")
+@router.put("/")
 async def update_guest(req: GuestUpdateRequest):
     session = database.get_db_session(engine)
     try:
         new_vals = vars(req)
-        new_vals = { k: v for k, v in new_vals.items() if v is not None }
-        is_guest_updated = session.query(Guest).filter(Guest.id == req.id).update(new_vals, synchronize_session=False)
+        new_vals = {k: v for k, v in new_vals.items() if v is not None}
+        is_guest_updated = session.query(Guest).filter(
+            Guest.id == req.id).update(new_vals, synchronize_session=False)
         session.flush()
         session.commit()
         response_msg = "Guest updated successfully"
@@ -61,13 +63,13 @@ async def update_guest(req: GuestUpdateRequest):
         print("Error : ", ex)
 
 
-@router.delete("/delete/{guest_id}")
+@router.delete("/{guest_id}")
 async def delete_guest(guest_id: int):
     session = database.get_db_session(engine)
     try:
         is_guest_updated = session.query(Guest).filter(
-                and_(Guest.id == guest_id, Guest.is_deleted == False)
-            ).update({Guest.is_deleted: True}, synchronize_session=False)
+            and_(Guest.id == guest_id, Guest.is_deleted == False)
+        ).update({Guest.is_deleted: True}, synchronize_session=False)
         session.flush()
         session.commit()
         response_msg = "Guest deleted successfully"
@@ -92,8 +94,8 @@ async def read_guest(guest_id: str):
     data = None
     try:
         data = session.query(Guest).filter(
-                and_(Guest.id == guest_id, Guest.is_deleted == False)
-            ).options(joinedload(Guest.tasks)).one()
+            and_(Guest.id == guest_id, Guest.is_deleted == False)
+        ).options(joinedload(Guest.tasks)).one()
     except Exception as ex:
         print("Error", ex)
         response_message = "Guest Not found"
@@ -107,8 +109,8 @@ async def read_guest(hash: str):
     data = None
     try:
         data = session.query(Guest).filter(
-                and_(Guest.hash == hash.upper(), Guest.is_deleted == False)
-            ).options(joinedload(Guest.tasks)).one()
+            and_(Guest.hash == hash.upper(), Guest.is_deleted == False)
+        ).options(joinedload(Guest.tasks)).one()
         response_message = "Guest retrieved successfully"
     except Exception as ex:
         print("Error", ex)
@@ -118,7 +120,7 @@ async def read_guest(hash: str):
 
 
 @router.get("/")
-async def read_all_guests(page_size: int=20, page: int=1):
+async def read_all_guests(page_size: int = 20, page: int = 1):
     session = database.get_db_session(engine)
     data = session.query(Guest).filter(and_(Guest.is_deleted == False)).order_by(
         desc(Guest.created_at)).limit(page_size).offset((page-1)*page_size).all()
@@ -132,15 +134,14 @@ async def read_guest(pattern: str):
     error = False
     try:
         data = session.query(Guest).filter(
-                or_(Guest.full_name.like(f'%{pattern}%'), 
-                    Guest.alt_name.like(f'%{pattern}%'),
-                    Guest.title.like(f'%{pattern}%'),
-                    Guest.organization.like(f'%{pattern}%'))
-            ).all()
+            or_(Guest.full_name.like(f'%{pattern}%'),
+                Guest.alt_name.like(f'%{pattern}%'),
+                Guest.title.like(f'%{pattern}%'),
+                Guest.organization.like(f'%{pattern}%'))
+        ).all()
     except Exception as ex:
         print("Error", ex)
         response_message = "Guest Not found"
         error = True
     response_message = "Guest retrieved successfully"
     return Response(data, 200, response_message, error)
-
